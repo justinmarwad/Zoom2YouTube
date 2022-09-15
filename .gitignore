@@ -1,0 +1,6 @@
+final/ 
+logs/
+recordings/ 
+secrets/
+.env 
+logo.mp4 
