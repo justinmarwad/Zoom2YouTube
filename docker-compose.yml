@@ -1,0 +1,14 @@
+version: "3.8"
+services:
+
+  code: 
+    build: .
+    container_name: code 
+
+    tty: true
+    stdin_open: true
+
+    environment:
+      -  PYTHONUNBUFFERED=1
+      -  EMAIL=${EMAIL}
+

@@ -44,7 +44,7 @@ pip3 install jwt
 if ! command -v ffmpeg &> /dev/null
 then
     echo "[INFO] FFMPEG not installed, installing now..."
-    apt install FFMPEG -y 
+    apt install ffmpeg -y 
 fi
 
 ## Download Latest Lectures From Zoom ##
@@ -71,7 +71,7 @@ while IFS= read -r -d '' FILE; do
     
     ## And Upload To YouTube ##
     # echo "[INFO] Uploading $OUTPUT_DIR/$FILE to YouTube"
-    # ./youtubeuploader -headlessAuth -filename "$OUTPUT" -title "$OUTPUT" -privacy "unlisted" -metaJSON "secrets/meta.json" -secrets "secrets/client_secrets-test.json" -cache "secrets/request.token"
+    # ./youtubeuploader -headlessAuth -filename "$OUTPUT" -title "$OUTPUT" -privacy "unlisted" -metaJSON "secrets/meta.json" -secrets "secrets/cl ient_secrets-test.json" -cache "secrets/request.token"
 done
 
 
