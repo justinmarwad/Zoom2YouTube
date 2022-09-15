@@ -1,5 +1,7 @@
 # Justin Marwad 2022 
-import os, subprocess, logging, colorama  
+from multiprocessing import parent_process
+import os, subprocess, logging, colorama, pathlib 
+import dateutil.parser as dparser
 
 class Zoom2YouTube:
     def __init__(self, email): 
@@ -26,7 +28,7 @@ class Zoom2YouTube:
         counter = 1
 
         while os.path.exists(path):
-            path = filename + " (" + str(counter) + ")" + extension
+            path = f"{filename}_{str(counter)}{extension}"
             counter += 1
 
         return path
@@ -38,20 +40,24 @@ class Zoom2YouTube:
 
     def edit_video(self, intro_video="logo.mp4", outro_video="logo.mp4", final_video=None):
         """ Edit video with intro and outro. """
-        if final_video is None: 
-            final_video = self.uniquify("final/final.mp4")
-
 
         for root, dirs, files in os.walk("recordings"):
             for video in files:
                 if video.endswith(".mp4"):
                     self.result(f"Editing {video}")
-                    video_path = os.path.join(root, video) 
+                    
+                    video_path = os.path.join(root, video)
+
+                    if final_video is None: 
+                        parent_dir = os.path.basename(os.path.dirname(video_path))
+                        date = dparser.parse(parent_dir.split(" ")[0], fuzzy=True).strftime("%Y-%m-%d")
+                        final_video = self.uniquify(f"final/final_{date}.mp4")
+
                     self.run(f"""ffmpeg -i {intro_video} -i "{video_path}" -i {outro_video} -filter_complex '[0:v]setsar=1,fps=30000/1001,format=yuv420p[intro];[1:v]scale=1920:1080:force_original_aspect_ratio=decrease,pad=1920:1080:-1:-1,setsar=1,fps=30000/1001,format=yuv420p[video];[2:v]setsar=1,fps=30000/1001,format=yuv420p[outro];[0:a]aformat=sample_rates=48000:channel_layouts=stereo[introa];[1:a]aformat=sample_rates=48000:channel_layouts=stereo[videoa];[2:a]aformat=sample_rates=48000:channel_layouts=stereo[outroa];[intro][introa][video][videoa][outro][outroa]concat=n=3:v=1:a=1[vid][a]' -map '[vid]' -map '[a]' -movflags +faststart {final_video} < /dev/null""")
 
                     self.result(f"Finished editing {video}")
-                    # self.run(f"rm {video}")
-                    # self.result(f"Removed {video}")
+                    self.run(f"rm {video_path}")
+                    self.result(f"Removed {video}")
 
     def upload_video(self, video, privacy="unlisted", meta_token="secrets/meta.json", client_secrets="secrets/client_secrets.json", request_token="secrets/request_token.json"):
         """ Upload video to YouTube. """
@@ -65,8 +71,8 @@ if __name__ == "__main__":
     print("[INFO] Zoom2YouTube. Download, edit, and upload Zoom recordings to YouTube.") 
     z2y = Zoom2YouTube(email)
     
-    print("[INFO] Downloading recordings from Zoom.")
-    z2y.download_video("2022-09-12", "2022-09-12")
+    # print("[INFO] Downloading recordings from Zoom.")
+    z2y.download_video("2022-09-01", "2022-09-12")
     
     print("[INFO] Editing recordings.")
     z2y.edit_video()
