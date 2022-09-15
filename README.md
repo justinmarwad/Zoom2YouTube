@@ -7,7 +7,14 @@ Zoom2YouTube brings together a few different projects and provides you with an e
 
 TBD
 
-### License ##
+### CREDITS ###
+
+Makes use of the following two projects: 
+
+1. Zoom Meeting Downloader: https://github.com/tribloom/Zoom-Meeting-Download
+2. YouTube  Uploader: https://github.com/porjo/youtubeuploader
+
+### LICENSE ##
 
 MIT License
 
