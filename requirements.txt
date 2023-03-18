@@ -1,3 +1,5 @@
-jwt
+pyzoom 
 colorama
 python-dateutil
+pillar-youtube-upload
+
